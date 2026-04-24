@@ -4,6 +4,8 @@
  */
 package pruebas.laboratorio2atzun;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Antony
@@ -11,12 +13,83 @@ package pruebas.laboratorio2atzun;
 public class Login extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Login.class.getName());
+    
+    int intentosFallidos = 0;
+    final int MAX_INTENTOS = 3;
 
     /**
      * Creates new form Login
      */
     public Login() {
         initComponents();
+        inicializarUsuarios();
+    }
+    
+    private void inicializarUsuarios() {
+
+        java.io.File file = new java.io.File("usuarios.txt");
+
+        if (!file.exists()) {
+            try {
+                java.io.PrintWriter pw = new java.io.PrintWriter(file);
+
+                pw.println("umg1,123,Usuario,Activo,1");
+                pw.println("umg2,123,Usuario,Activo,1");
+                pw.println("umg3,123,Usuario,Activo,1");
+                pw.println("umg4,123,Usuario,Activo,1");
+                pw.println("umg5,123,Administrador,Activo,1");
+
+                pw.close();
+
+                System.out.println("Usuarios iniciales creados");
+
+            } catch (Exception e) {
+                System.out.println("Error creando usuarios: " + e.getMessage());
+            }
+        }
+    }
+    
+    private String validarUsuario(String usuario, String pass) {
+
+        try {
+            java.io.BufferedReader br = new java.io.BufferedReader(
+                new java.io.FileReader("usuarios.txt")
+            );
+
+            String linea;
+
+            while ((linea = br.readLine()) != null) {
+
+                String[] datos = linea.split(",");
+
+                if (datos.length == 5) {
+
+                    String userFile = datos[0].trim();
+                    String passFile = datos[1].trim();
+                    String rolFile = datos[2].trim();
+                    String estadoFile = datos[3].trim();
+                    String primerLogin = datos[4].trim();
+
+                    if (userFile.equals(usuario) && passFile.equals(pass)) {
+
+                        br.close();
+
+                        if (estadoFile.equalsIgnoreCase("Activo")) {
+                            return "OK|" + rolFile + "|" + primerLogin;
+                        } else {
+                            return "INACTIVO";
+                        }
+                    }
+                }
+            }
+
+            br.close();
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        return "INVALIDO";
     }
 
     /**
@@ -28,80 +101,164 @@ public class Login extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        pnLogin = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jPasswordField1 = new javax.swing.JPasswordField();
-        jButton1 = new javax.swing.JButton();
+        txtUsuarioLogin = new javax.swing.JTextField();
+        txtPasswordLogin = new javax.swing.JPasswordField();
+        btnIniciarSesion = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Login");
+        setBackground(new java.awt.Color(204, 204, 204));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setResizable(false);
 
-        jLabel1.setText("Iniciar sesión");
+        pnLogin.setBackground(new java.awt.Color(153, 255, 204));
+
+        jLabel1.setText("Login");
 
         jLabel2.setText("Usuario:");
 
         jLabel3.setText("Contraseña:");
 
-        jTextField1.setToolTipText("Ingrese usuario");
+        txtUsuarioLogin.setToolTipText("Ingrese usuario");
 
-        jPasswordField1.setText("jPasswordField1");
+        btnIniciarSesion.setText("Iniciar Sesión");
+        btnIniciarSesion.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnIniciarSesionMouseClicked(evt);
+            }
+        });
 
-        jButton1.setText("Iniciar Sesión");
-        jButton1.addActionListener(this::jButton1ActionPerformed);
+        javax.swing.GroupLayout pnLoginLayout = new javax.swing.GroupLayout(pnLogin);
+        pnLogin.setLayout(pnLoginLayout);
+        pnLoginLayout.setHorizontalGroup(
+            pnLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnLoginLayout.createSequentialGroup()
+                .addGap(181, 181, 181)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnLoginLayout.createSequentialGroup()
+                .addGap(0, 143, Short.MAX_VALUE)
+                .addGroup(pnLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtPasswordLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtUsuarioLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(135, 135, 135))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnLoginLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnIniciarSesion)
+                .addGap(147, 147, 147))
+        );
+        pnLoginLayout.setVerticalGroup(
+            pnLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnLoginLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(24, 24, 24)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtUsuarioLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtPasswordLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addComponent(btnIniciarSesion)
+                .addContainerGap(86, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(64, 64, 64)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 105, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPasswordField1)
-                    .addComponent(jTextField1))
-                .addGap(70, 70, 70))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(143, 143, 143)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(132, 132, 132)
-                        .addComponent(jButton1)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(pnLogin, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addComponent(jLabel1)
-                .addGap(31, 31, 31)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(40, 40, 40)
-                .addComponent(jButton1)
-                .addContainerGap(81, Short.MAX_VALUE))
+            .addComponent(pnLogin, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
+
+        getAccessibleContext().setAccessibleDescription("");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnIniciarSesionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnIniciarSesionMouseClicked
         // TODO add your handling code here:
-        MenuPrincipal menu = new MenuPrincipal();
-        menu.setVisible(true);
-        
-        this.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+        String usuario = txtUsuarioLogin.getText();
+        String pass = new String(txtPasswordLogin.getPassword());
+
+        String resultado = validarUsuario(usuario, pass);
+
+        if (resultado.startsWith("OK")) {
+
+            intentosFallidos = 0;
+
+            String rol = resultado.split("\\|")[1];
+            String sesion = resultado.split("\\|")[2];
+
+            JOptionPane.showMessageDialog(pnLogin,
+                "Login correcto. Bienvenido " + rol,
+                "Acceso permitido",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+
+            MenuPrincipal menu = new MenuPrincipal(rol);
+            menu.setVisible(true);
+            if(sesion.equals("1")){
+                menu.dlActualizaPassword.setUndecorated(true);
+                menu.btnCancelaPass.setVisible(false);
+                menu.txtUsuario1.setText(usuario);
+                menu.dlActualizaPassword.pack();                         // ajusta a contenido
+                menu.dlActualizaPassword.setLocationRelativeTo(this);
+                menu.dlActualizaPassword.setVisible(true);
+                
+                menu.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+            } else {
+                setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+                menu.btnCancelaPass.setVisible(true);
+                menu.txtUsuario1.setText(usuario);
+            }
+            this.dispose();
+
+        }
+        else if (resultado.equals("INACTIVO")) {
+
+            JOptionPane.showMessageDialog(pnLogin,
+                "Usuario inactivado, comunícate con soporte",
+                "Acceso denegado",
+                JOptionPane.WARNING_MESSAGE
+            );
+
+        }
+        else {
+
+            intentosFallidos++;
+
+            JOptionPane.showMessageDialog(pnLogin,
+                "Credenciales incorrectas (" + intentosFallidos + "/3)",
+                "Error de acceso",
+                JOptionPane.ERROR_MESSAGE
+            );
+
+            if (intentosFallidos >= MAX_INTENTOS) {
+
+                btnIniciarSesion.setEnabled(false);
+                txtUsuarioLogin.setEnabled(false);
+                txtPasswordLogin.setEnabled(false);
+
+                JOptionPane.showMessageDialog(pnLogin,
+                    "Usuario bloqueado por intentos fallidos",
+                    "Bloqueo de seguridad",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+        }
+    }//GEN-LAST:event_btnIniciarSesionMouseClicked
 
     /**
      * @param args the command line arguments
@@ -129,12 +286,13 @@ public class Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnIniciarSesion;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JPanel pnLogin;
+    private javax.swing.JPasswordField txtPasswordLogin;
+    private javax.swing.JTextField txtUsuarioLogin;
     // End of variables declaration//GEN-END:variables
 
 }
